@@ -47,6 +47,7 @@ mkdir -p Netflix/NF_TEST
 * ```$ python ~/repos/DeepRecoEncoders/data_utils/netflix_data_convert.py training_set Netflix```. Here ```~/repos/DeepRecoEncoders''' is a path to this repo.
 
 ### Train the model
+In this example, the model will be trained for 12 epochs. In paper we train for 102.
 ```
 python ~/repos/DeepRecoEncoders/run.py --gpu_ids 0 \
 --path_to_train_data Netflix/NF_TRAIN \
@@ -64,3 +65,26 @@ python ~/repos/DeepRecoEncoders/run.py --gpu_ids 0 \
 --num_epochs 12 \
 --summary_frequency 1000
 ```
+
+Note that you can run Tensorboard in parallel
+```
+$ tensorboard --logdir=model_save
+```
+
+### Run inference on the Test set
+```
+python ~/repos/DeepRecoEncoders/infer.py \
+--path_to_train_data Netflix/NF_TRAIN \
+--path_to_eval_data Netflix/NF_TEST \
+--hidden_layers 512,512,1024 \
+--non_linearity_type selu \
+--save_path model_save/model.epoch_11 \
+--drop_prob 0.8 \
+--predictions_path preds.txt
+```
+
+### Compute Test RMSE
+```
+python ~/repos/DeepRecoEncoders/compute_RMSE.py --path_to_predictions=preds.txt
+```
+After 12 epochs you should get RMSE around 0.927. Train longer to get below 0.92
